@@ -1,8 +1,9 @@
-package Food_Ordering
+package main
 
 import (
 	"encoding/json"
 	managerElem "github.com/EliriaT/Food-Ordering/orders-manager-elem"
+	"log"
 	"sync"
 
 	"github.com/gorilla/mux"
@@ -29,14 +30,14 @@ func registerRestaurant(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	managerElem.RestaurList.RestaurantsNum++
-	managerElem.RestaurList.RestaurantsData = append(managerElem.RestaurList.RestaurantsData, registeredRestaurant)
-	managerElem.RestaurantsAddress.Store(registeredRestaurant.Id, registeredRestaurant.Address)
+	managerElem.RegisterRestaurant(registeredRestaurant)
 
+	log.Println("Succesfully registered restaurand with id ", registeredRestaurant.Id)
+	log.Printf("Current menu : %v", managerElem.RestaurList)
 	defer r.Body.Close()
-	jsonCookedOrder, _ := json.Marshal(registeredRestaurant)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonCookedOrder)
+	//jsonCookedOrder, _ := json.Marshal(registeredRestaurant)
+	//w.Header().Set("Content-Type", "application/json")
+	//w.Write(jsonCookedOrder)
 }
 
 func receiveOrder(w http.ResponseWriter, r *http.Request) {
@@ -49,6 +50,8 @@ func receiveOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer r.Body.Close()
+
+	log.Printf("Order from client %d was received : %v \n", clientOrder.ClientId, clientOrder.Orders)
 
 	clientOrderResponse := managerElem.ConstructResponseOrder(clientOrder)
 
@@ -65,4 +68,7 @@ func main() {
 	r.HandleFunc("/menu", getMenus).Methods("GET")
 	r.HandleFunc("/register", registerRestaurant).Methods("POST")
 	r.HandleFunc("/order", receiveOrder).Methods("POST")
+
+	log.Println("Food-Ordering server started..")
+	log.Fatal(http.ListenAndServe(":8084", r))
 }
