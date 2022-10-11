@@ -21,3 +21,29 @@ Food ordering service workflow:
 3. sends that response back to client .
 4. receives client order ratings and propagate ratings to the restaurants
 5. calculates simulation average rating based on restaurants average rating
+
+
+## Running the App
+To run the App, run in terminal the following command:<br />
+
+
+`go run .`
+
+
+## Running in Docker container
+1. To run the app in a docker container, first build the image:<br />
+
+`docker build -t food-ordering .`
+
+2. Then run the container using the created image:<br />
+
+`docker run --name food-ordering --network restaurant -it --rm  -p 8084:8084 food-ordering`
+
+For this you firstly need a created docker network. To create a docker network run:
+
+`docker network create restaurant`
+
+3. To stop the running container:
+
+`docker stop {docker's id}`
+

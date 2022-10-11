@@ -70,5 +70,5 @@ func main() {
 	r.HandleFunc("/order", receiveOrder).Methods("POST")
 
 	log.Println("Food-Ordering server started..")
-	log.Fatal(http.ListenAndServe(":8084", r))
+	log.Fatal(http.ListenAndServe(managerElem.Port, r))
 }
