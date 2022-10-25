@@ -60,6 +60,26 @@ func receiveOrder(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonCookedOrder)
 }
 
+func receiveRaitings(w http.ResponseWriter, r *http.Request) {
+	var clientRatings managerElem.RaitingsResponses
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&clientRatings)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	defer r.Body.Close()
+
+	log.Printf("Ratings from client %d was received : %+v \n", clientRatings.ClientId, clientRatings.Orders)
+
+	//sending the ratings to the restaurants
+	managerElem.SendRatingsToRestaurants(clientRatings)
+
+	w.WriteHeader(http.StatusNoContent)
+	w.Write([]byte{})
+}
+
 func main() {
 	//for init
 	managerElem.RestaurantsAddress = sync.Map{}
@@ -68,6 +88,7 @@ func main() {
 	r.HandleFunc("/menu", getMenus).Methods("GET")
 	r.HandleFunc("/register", registerRestaurant).Methods("POST")
 	r.HandleFunc("/order", receiveOrder).Methods("POST")
+	r.HandleFunc("/rating", receiveRaitings).Methods("POST")
 
 	log.Println("Food-Ordering server started..")
 	log.Fatal(http.ListenAndServe(managerElem.Port, r))

@@ -14,6 +14,7 @@ func RegisterRestaurant(registerInfo RestaurantRegister) {
 	var restaurInfo RestaurantInfo
 	RestaurList.RestaurantsNum++
 
+	restaurInfo.Id = registerInfo.Id
 	restaurInfo.Name = registerInfo.Name
 	restaurInfo.MenuItems = registerInfo.MenuItems
 	restaurInfo.Menu = registerInfo.Menu
@@ -77,6 +78,8 @@ func SendOrderToRestaurant(order ReceivedFromClientOrder) (orderId int, estimate
 
 	}
 	resp, err := http.Post(restaurantAddress.(string)+"v2/order", "application/json", bytes.NewBuffer(reqBody))
+
+	// TODO IF ERROR UNANOUNCE CLIENT AND CANCEL ORDER
 	if err != nil {
 		log.Fatal("Sending Online Order Request to Restaurant Failed: %s", err.Error())
 	}

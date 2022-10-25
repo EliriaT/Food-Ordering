@@ -12,6 +12,7 @@ type RestaurantRegister struct {
 
 // for providing menu
 type RestaurantInfo struct {
+	Id        int     `json:"restaurant_id"`
 	Name      string  `json:"name"`
 	MenuItems int     `json:"menu_items"`
 	Menu      []Food  `json:"menu"`
