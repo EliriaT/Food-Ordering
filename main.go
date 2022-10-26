@@ -53,8 +53,11 @@ func receiveOrder(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Order from client %d was received : %v \n", clientOrder.ClientId, clientOrder.Orders)
 
-	clientOrderResponse := managerElem.ConstructResponseOrder(clientOrder)
-
+	clientOrderResponse, err := managerElem.ConstructResponseOrder(clientOrder)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		//http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 	jsonCookedOrder, _ := json.Marshal(clientOrderResponse)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonCookedOrder)
